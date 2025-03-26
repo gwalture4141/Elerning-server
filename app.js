@@ -1,36 +1,42 @@
-
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./Routes/index');
+
+
+const cors = require('cors');
+const dotenv = require('dotenv');
+
+dotenv.config();
 const app = express();
-const port= 5000;
 
+// Middleware
+app.use(express.json());
+app.use(cors());
 
-// CORS issue will be solved // manual cors issue fixing
+// Fix CORS issue
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // http://localhost:3000
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Change * to frontend URL in production
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Header', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
-//npm i cors
+// Routes
 app.use('/', routes);
 
 
-mongoose.connect(
-    'mongodb://localhost:27017/',  // Specify your database name here
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }
-).then(success => {
-    console.log("✅ MongoDB Connected Successfully");
 
-    app.listen(port, () => {
-        console.log(`Server is running on ${port}`);
-    });
+mongoose.set("debug", true);
+console.log("MongoDB URI:", process.env.MONGO_URI);
 
-}).catch(error => {
-    console.log("❌ MongoDB Connection Error: " + error);
-});
+// Database Connection
+mongoose.connect( process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('✅ MongoDB Connected Successfully'))
+.catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// Start Server
+const PORT = process.env.PORT || 5400;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

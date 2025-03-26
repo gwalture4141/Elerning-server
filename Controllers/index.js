@@ -1,8 +1,6 @@
 // const courseList = require("../Models/courses.json");
 const courseList = require("../Models/Courses");
 
-
-
 // exports.getAllCourses = (req, res) => {
 //     res.status(200).json(courseList);
 // }
@@ -97,4 +95,3 @@ exports.getCoursesBySub = (req, res) => {
             });
         });
 };
-
